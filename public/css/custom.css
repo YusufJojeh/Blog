@@ -1,0 +1,96 @@
+/* ========================
+   GLOBAL BACKGROUND & TEXT
+   ======================== */
+body,
+.wrapper {
+    background-color: #111; /* deep charcoal */
+    color: #ddd; /* light grey text */
+}
+.content-wrapper {
+    background-color: #181818; /* slightly lighter content bg */
+}
+
+/* ======= NAVBAR ======= */
+.main-header.navbar-dark {
+    background-color: #000; /* pure black nav */
+    border-bottom: 1px solid #222;
+}
+.main-header .nav-link {
+    color: #ccc; /* grey icons/text */
+}
+.main-header .nav-link:hover {
+    color: #fff;
+}
+
+/* ====== BRAND LOGO ====== */
+.brand-link {
+    background-color: #000; /* black container */
+}
+.brand-link .brand-image {
+    opacity: 0.9;
+}
+.brand-link .brand-text {
+    color: #e53935; /* your “.Dev” red */
+    font-weight: bold;
+}
+
+/* ======== SIDEBAR ======== */
+.sidebar-dark-primary,
+.main-sidebar {
+    background-color: #141414; /* very dark sidebar */
+}
+.sidebar-dark-primary .nav-sidebar .nav-link {
+    color: #bbb; /* light grey links */
+}
+.sidebar-dark-primary .nav-sidebar .nav-link:hover,
+.sidebar-dark-primary .nav-sidebar .nav-link.active {
+    background-color: #e53935; /* red highlight */
+    color: #fff;
+}
+.sidebar-dark-primary .nav-icon {
+    color: #999;
+}
+
+/* ====== FOOTER ====== */
+.main-footer {
+    background-color: #000;
+    color: #888;
+    border-top: 1px solid #222;
+}
+.main-footer a {
+    color: #e53935;
+}
+
+/* ===== HEADINGS & BUTTONS ===== */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: #eee;
+}
+.btn-primary {
+    background-color: #e53935;
+    border-color: #c62828;
+}
+.btn-primary:hover {
+    background-color: #d32f2f;
+    border-color: #b71c1c;
+}
+
+/* ========================
+   TABLE STYLES (HEADERS & CONTENT)
+   ======================== */
+
+/* Bold Table Headers */
+table th {
+    font-weight: bold;
+    color: #111; /* white text */
+}
+
+/* Bold Table Content */
+table td {
+    font-weight: bold;
+    color: #000; /* light grey content text */
+}
