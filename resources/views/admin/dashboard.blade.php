@@ -3,5 +3,5 @@
 @section('title', 'Admin dashboard')
 
 @section('content')
-    <h1>Welcome to Admin Blog Dashboard</h1>
+    <h1 style="color:#fff !important;">Welcome to Admin Blog Dashboard</h1>
 @endsection

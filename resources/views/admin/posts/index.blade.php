@@ -9,7 +9,7 @@
             {{-- Header --}}
             <div class="row mb-3">
                 <div class="col-sm-6">
-                    <h1>All Posts</h1>
+                    <h1 style="color:#fff !important;">All Posts</h1>
                 </div>
                 <div class="col-sm-6 text-right">
                     <a href="{{ route('admin.posts.create') }}" class="btn btn-success">
