@@ -4,7 +4,7 @@
 body,
 .wrapper {
     background-color: #111; /* deep charcoal */
-    color: #ddd; /* light grey text */
+    color: #000; /* light grey text */
 }
 .content-wrapper {
     background-color: #181818; /* slightly lighter content bg */
@@ -68,7 +68,7 @@ h3,
 h4,
 h5,
 h6 {
-    color: #eee;
+    color: #000;
 }
 .btn-primary {
     background-color: #e53935;

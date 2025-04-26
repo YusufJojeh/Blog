@@ -1,99 +1,91 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
 use App\Models\Post;
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller {
-
     public function index() {
-        $postFromDB = Post::all();
-        return view( 'posts.index', [ 'posts'=>$postFromDB ] );
-    }
+        $posts = Post::with( [ 'category', 'author' ] )
+        ->latest()
+        ->paginate( 15 );
 
-    /**
-    * Show the form for creating a new resource.
-    */
+        return view( 'admin.posts.index', compact( 'posts' ) );
+    }
 
     public function create() {
-        $users = User::all();
-        return view( 'posts.create', [ 'users'=>$users ] );
+        $categories = Category::pluck( 'name', 'id' );
+        $authors = User::pluck( 'name', 'id' );
+        return view( 'admin.posts.create', compact( 'categories', 'authors' ) );
     }
 
-    /**
-    * Store a newly created resource in storage.
-    */
-
-    public function store() {
-        $data = request()->all();
-        // // return $data;
-        $request = request();
-        $request->validate( [
-            'title' => [ 'required', 'min:3' ],
-            'description' => [ 'required', 'min:5' ],
-            'post_creator' => [ 'required', 'exists:users,id' ],
-            'image'=> [ 'required', 'image' ]
-
+    public function store( Request $request ) {
+        $data = $request->validate( [
+            'title' => 'required|string|max:255',
+            'content' => 'required',
+            'image' => 'nullable|image|max:2048',
+            'category_id' => 'nullable|exists:categories,id',
+            'author_id' => 'nullable|exists:users,id',
+            'status' => 'required|in:draft,published',
+            'published_at' => 'nullable|date',
         ] );
 
-        $title = request()->title;
-        $description = request()->description;
-        $post_creator = request()->post_creator;
-        $image = request()->image;
-        $imagePath = request( 'image' )->store( 'uploads', 'public' );
+        if ( $request->hasFile( 'image' ) ) {
+            $data[ 'image' ] = $request->file( 'image' )
+            ->store( 'posts', 'public' );
+        }
 
-        Post::create( [
-            'title'=>$title,
-            'description'=>$description,
-            'user_id'=>$post_creator,
-            'image'=>$imagePath,
-        ] );
-        return to_route( 'posts.index' );
+        Post::create( $data );
+
+        return redirect()
+        ->route( 'admin.posts.index' )
+        ->with( 'success', 'Post created.' );
     }
-
-    /**
-    * Display the specified resource.
-    */
-
-    public function show( Post $post ) {
-
-        return view( 'posts.show', [ 'post'=>$post ] );
-    }
-
-    /**
-    * Show the form for editing the specified resource.
-    */
 
     public function edit( Post $post ) {
-        $users = User::all();
-        return view( 'posts.edit', [ 'users'=>$users, 'post'=>$post ] );
+        $categories = Category::pluck( 'name', 'id' );
+        $authors = User::pluck( 'name', 'id' );
+        return view( 'admin.posts.edit', compact( 'post', 'categories', 'authors' ) );
     }
 
-    /**
-    * Update the specified resource in storage.
-    */
-
-    public function update( Request $request, $postId ) {
-        $title = request()->title;
-        $description = request()->description;
-        $post_creator = request()->post_creator;
-
-        $singlePostFromDB = Post::find( $postId );
-        $singlePostFromDB->update( [
-            'title'=> $title,
-            'description'=> $description,
-            'user_id'=> $post_creator,
+    public function update( Request $request, Post $post ) {
+        $data = $request->validate( [
+            'title' => 'required|string|max:255',
+            'content' => 'required',
+            'image' => 'nullable|image|max:2048',
+            'category_id' => 'nullable|exists:categories,id',
+            'author_id' => 'nullable|exists:users,id',
+            'status' => 'required|in:draft,published',
+            'published_at' => 'nullable|date',
         ] );
-        return to_route( 'posts.show', $postId );
+
+        if ( $request->hasFile( 'image' ) ) {
+            // delete old
+            if ( $post->image ) {
+                Storage::disk( 'public' )->delete( $post->image );
+            }
+            $data[ 'image' ] = $request->file( 'image' )
+            ->store( 'posts', 'public' );
+        }
+
+        $post->update( $data );
+
+        return redirect()
+        ->route( 'admin.posts.index' )
+        ->with( 'success', 'Post updated.' );
     }
 
-    /**
-    * Remove the specified resource from storage.
-    */
-
-    public function destroy( $postId ) {
-        Post::where( 'id', $postId )->delete();
-        return to_route( 'posts.index' );
+    public function destroy( Post $post ) {
+        if ( $post->image ) {
+            Storage::disk( 'public' )->delete( $post->image );
+        }
+        $post->delete();
+        return back()->with( 'success', 'Post deleted.' );
     }
 }

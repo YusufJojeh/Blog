@@ -1,3 +1,4 @@
+{{-- resources/views/layouts/dash-lay.blade.php --}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,14 +11,16 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback" />
 
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        crossorigin="anonymous" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}" />
 
     <!-- overlayScrollbars -->
-    <link rel="stylesheet" href="{{ asset('css/OverlayScrollbars.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" />
 
-    <!-- AdminLTE Theme style -->
+    <!-- Summernote -->
+    <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}" />
+
+    <!-- AdminLTE -->
     <link rel="stylesheet" href="{{ asset('css/adminlte.min.css') }}" />
 
     <!-- Custom overrides -->
@@ -28,6 +31,7 @@
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
     <div class="wrapper">
+
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-dark">
             <ul class="navbar-nav">
@@ -68,7 +72,6 @@
                             alt="User Image" />
                     </div>
                     @php
-                        // 1) Detect which guard is logged in
                         $guards = ['admin', 'author', 'reader', 'web'];
                         $currentUser = null;
                         $currentGuard = null;
@@ -79,14 +82,10 @@
                                 break;
                             }
                         }
-
-                        // 2) Build the dashboard route name
                         $dashboardRoute = $currentGuard ? $currentGuard . '.dashboard' : 'dashboard';
                     @endphp
                     <div class="info">
-                        <a href="#" class="d-block">
-                            {{ $currentUser->name ?? 'Guest' }}
-                        </a>
+                        <a href="#" class="d-block">{{ $currentUser->name ?? 'Guest' }}</a>
                     </div>
                 </div>
 
@@ -103,7 +102,6 @@
                             </a>
                         </li>
 
-                        <!-- Admin Links -->
                         @if ($currentGuard === 'admin')
                             <li class="nav-item">
                                 <a href="{{ route('admin.users.index') }}" class="nav-link">
@@ -112,13 +110,14 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{ route('admin.posts.index') }}" class="nav-link">
                                     <i class="nav-icon fas fa-newspaper"></i>
                                     <p>Article Management</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="
+                                " class="nav-link">
                                     <i class="nav-icon fas fa-tags"></i>
                                     <p>Categories & Tags</p>
                                 </a>
@@ -135,9 +134,7 @@
                                     <p>Settings</p>
                                 </a>
                             </li>
-
-                            <!-- Author Links -->
-                        @elseif($currentGuard === 'author')
+                        @elseif ($currentGuard === 'author')
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-edit"></i>
@@ -156,9 +153,7 @@
                                     <p>Comments on My Articles</p>
                                 </a>
                             </li>
-
-                            <!-- Reader Links -->
-                        @elseif($currentGuard === 'reader')
+                        @elseif ($currentGuard === 'reader')
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="nav-icon fas fa-book"></i>
@@ -166,13 +161,13 @@
                                 </a>
                             </li>
                         @endif
+
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
             </div>
             <!-- /.sidebar -->
         </aside>
-        <!-- /.Main Sidebar Container -->
 
         <!-- Content Wrapper -->
         <div class="content-wrapper">
@@ -188,14 +183,22 @@
         <footer class="main-footer text-center">
             <strong>&copy; {{ date('Y') }} My Dashboard</strong> All rights reserved.
         </footer>
+
     </div>
     <!-- ./wrapper -->
 
     <!-- REQUIRED SCRIPTS -->
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.overlayScrollbars.min.js') }}"></script>
-    <script src="{{ asset('js/adminlte.js') }}"></script>
+    <!-- jQuery -->
+    <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- overlayScrollbars -->
+    <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+    <!-- Summernote -->
+    <script src="{{ asset('plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <!-- AdminLTE App -->
+    <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
+
     @stack('scripts')
 </body>
 
