@@ -1,7 +1,7 @@
-// Body
-$body-bg: #f8fafc;
+// resources/sass/_variables.scss
+/// —————————————————————————————————————————————
+/// Variable overrides for Bootstrap
+/// —————————————————————————————————————————————
 
-// Typography
-$font-family-sans-serif: 'Nunito', sans-serif;
-$font-size-base: 0.9rem;
-$line-height-base: 1.6;
+$font-family-sans-serif: "Nunito", ui-sans-serif, system-ui, sans-serif !default;
+// …any other overrides…

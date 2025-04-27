@@ -6,25 +6,38 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Admin;
+use App\Services\AdminDashboardService;
 
 class AdminDashboard extends Controller {
-    public function dashboard() {
-        // Gather counts for various post statuses.
-        $pendingPostsCount  = Post::where( 'status', 'pending' )->count();
-        $approvedPostsCount = Post::where( 'status', 'approved' )->count();
-        $rejectedPostsCount = Post::where( 'status', 'rejected' )->count();
-        $totalPosts         = Post::count();
 
-        return view( 'admin.dashboard', [
-            'pendingPostsCount'  => $pendingPostsCount,
-            'approvedPostsCount' => $approvedPostsCount,
-            'rejectedPostsCount' => $rejectedPostsCount,
-            'totalPosts'         => $totalPosts,
-        ] );
+    protected AdminDashboardService $service;
+
+    public function __construct( AdminDashboardService $service ) {
+        $this->service = $service;
+    }
+
+    public function dashboard() {
+        $userStats        = $this->service->getUserStats();
+        $postStats        = $this->service->getPostStats();
+        $commentStats     = $this->service->getCommentStats();
+        $newRegistrations = $this->service->getNewRegistrations();
+        $recentPosts      = $this->service->getRecentPosts();
+        $postsPerDay      = $this->service->getPostsPerDay();
+        $userSignUps      = $this->service->getUserSignUps();
+
+        return view( 'admin.dashboard', compact(
+            'userStats',
+            'postStats',
+            'commentStats',
+            'newRegistrations',
+            'recentPosts',
+            'postsPerDay',
+            'userSignUps'
+        ) );
     }
 
     public function profile() {
-        
+
         $admin = Auth::guard( 'admin' )->user();
         return view( 'admin.profile', compact( 'admin' ) );
     }

@@ -1,45 +1,63 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use App\Models\Admin;
+use App\Models\Author;
+use App\Models\Reader;
 
 class LoginController extends Controller {
-    public function showLoginForm() {
+    public function showLoginForm( Request $request ) {
+        // All three guards share the same view
         return view( 'auth.login' );
     }
 
     public function login( Request $request ) {
         $credentials = $request->only( 'email', 'password' );
+        $guard       = $request->input( 'guard', 'reader' );
+        $remember    = $request->has( 'remember' );
 
-        foreach ( [ 'admin', 'author', 'reader' ] as $guard ) {
-            if ( Auth::guard( $guard )->attempt( $credentials ) ) {
-                $request->session()->regenerate();
+        // Pick the right model
+        $model = match( $guard ) {
+            'admin'  => Admin::class,
+            'author' => Author::class,
+            'reader' => Reader::class,
+            default  => Reader::class,
+        }
+        ;
 
-                // حفظ اسم الجارد في الجلسة
-                session( [ 'auth_guard' => $guard ] );
-
-                return redirect()->intended( "/$guard/dashboard" );
-            }
+        // Find & verify
+        $user = $model::where( 'email', $credentials[ 'email' ] )->first();
+        if ( !$user || !Hash::check( $credentials[ 'password' ], $user->password ) ) {
+            return back()
+            ->withErrors( [ 'email'=>'المعلومات غير صحيحة.' ] )
+            ->withInput( [ 'email'=>$credentials[ 'email' ] ] );
         }
 
-        return back()->withErrors( [
-            'email' => 'المعلومات غير صحيحة.',
-        ] )->onlyInput( 'email' );
+        // Log in, regenerate, store guard
+        Auth::guard( $guard )->login( $user, $remember );
+        $request->session()->regenerate();
+        session( [ 'guard'=>$guard ] );
+
+        Log::debug( 'Redirecting to dashboard', [ 'guard'=>$guard ] );
+        return redirect()->intended( "/{$guard}/dashboard" );
     }
 
     public function logout( Request $request ) {
-        $guard = session( 'auth_guard' );
-
-        if ( $guard && Auth::guard( $guard )->check() ) {
-            Auth::guard( $guard )->logout();
-        }
+        $guard = session( 'guard', 'reader' );
+        Auth::guard( $guard )->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect( '/login' );
+        $loginPath = in_array( $guard, [ 'admin', 'author', 'reader' ] )
+        ? "/{$guard}/login"
+        : '/login';
+
+        return redirect( $loginPath );
     }
 }

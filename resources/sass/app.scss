@@ -1,8 +1,14 @@
-// Fonts
-@import url('https://fonts.bunny.net/css?family=Nunito');
+// resources/sass/app.scss
 
-// Variables
-@import 'variables';
+// 1) MODULE IMPORTS — must be **first**
+@use "./variables" as *;
+@use "bootstrap" with (
+    // pass in your override
+    $font-family-sans-serif: $font-family-sans-serif
+);
 
-// Bootstrap
-@import 'bootstrap/scss/bootstrap';
+// 2) CSS IMPORTS and CUSTOM CODE
+@import url("https://fonts.bunny.net/css?family=Nunito");
+
+// 3) Your own styles
+// body { font-family: $font-family-sans-serif; }
