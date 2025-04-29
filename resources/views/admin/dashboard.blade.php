@@ -27,7 +27,7 @@
                         <p>Published Posts</p>
                     </div>
                     <div class="icon"><i class="fas fa-file-alt"></i></div>
-                    <a href="{{ route('admin.posts.index') }}" class="small-box-footer">
+                    <a href="" class="small-box-footer">
                         Manage posts <i class="fas fa-arrow-circle-right"></i>
                     </a>
                 </div>
@@ -90,7 +90,7 @@
                         <h3>Latest Posts</h3>
                     </div>
                     <div class="card-body table-responsive p-0">
-                        <table class="table table-hover">
+                        <table class="table table-hove.......r">
                             <thead>
                                 <tr>
                                     <th>Title</th>

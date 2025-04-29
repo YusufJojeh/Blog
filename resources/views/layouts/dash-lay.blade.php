@@ -1,11 +1,16 @@
-{{-- resources/views/layouts/dash-lay.blade.php --}}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@yield('title', 'Dashboard | Home')</title>
+    {{-- Page Title + Site Name --}}
+    <title>@yield('title', 'Dashboard') – {{ $site_name }}</title>
+
+    {{-- Dynamic Favicon --}}
+    @if ($favicon)
+        <link rel="shortcut icon" href="{{ asset('storage/' . $favicon) }}" type="image/png">
+    @endif
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -20,7 +25,15 @@
     <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}" />
     <!-- AdminLTE -->
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}" />
-    <!-- Custom -->
+
+    {{-- Custom CSS from settings --}}
+    @if ($custom_css)
+        <style>
+            {!! $custom_css !!}
+        </style>
+    @endif
+
+    <!-- Project Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}" />
 
     @stack('styles')
@@ -50,7 +63,7 @@
         <!-- /.navbar -->
 
         @php
-            // Determine guard & user
+            // Determine current guard & user
             $currentGuard = null;
             $currentUser = null;
             foreach (['admin', 'author', 'reader'] as $g) {
@@ -62,27 +75,30 @@
             }
         @endphp
 
-        <!-- Main Sidebar -->
+        {{-- Main Sidebar --}}
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <!-- Brand Logo -->
-            <a href="#" class="brand-link">
-                <img src="{{ asset('images/logo.png') }}" class="brand-image img-circle elevation-3" style="opacity:.8"
-                    alt="Logo">
-                <span class="brand-text font-weight-light">.Dev</span>
+            {{-- Brand Logo --}}
+            <a href="{{ $currentGuard ? route($currentGuard . '.dashboard') : url('/') }}" class="brand-link">
+                @if ($logo)
+                    <img src="{{ asset('storage/' . $logo) }}" class="brand-image img-circle elevation-3"
+                        style="opacity: .8" alt="Site Logo">
+                @else
+                    <img src="{{ asset('images/logo.png') }}" class="brand-image img-circle elevation-3"
+                        style="opacity: .8" alt="Default Logo">
+                @endif
+                <span class="brand-text font-weight-light">{{ $site_name }}</span>
             </a>
 
-            <!-- Sidebar -->
             <div class="sidebar">
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" data-accordion="false">
-
-                        {{-- User panel --}}
+                        {{-- User Panel --}}
                         <li class="nav-item has-treeview">
                             <a href="#" class="nav-link">
                                 <img src="{{ asset('images/' . ($currentUser->profile_image ?? 'default.png')) }}"
                                     class="img-circle elevation-2"
-                                    style="width:36px; height:36px; object-fit:cover; border-radius:50%; border:2px solid #fff;"
-                                    alt="User Avatar">
+                                    style="width:36px;height:36px;object-fit:cover;border:2px solid #fff;"
+                                    alt="Avatar">
                                 <p class="ps-3 mb-0 d-inline-block">
                                     {{ $currentUser->name ?? 'Guest' }}
                                     <i class="fas fa-angle-down float-right"></i>
@@ -110,8 +126,8 @@
 
                         {{-- Dashboard Link --}}
                         <li class="nav-item">
-                            <a href="#"
-                                class="nav-link {{ request()->routeIs("{$currentGuard}.dashboard") ? 'active' : '' }}">
+                            <a href="{{ $currentGuard ? route($currentGuard . '.dashboard') : url('/') }}"
+                                class="nav-link {{ request()->routeIs($currentGuard . '.dashboard') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Dashboard</p>
                             </a>
@@ -119,25 +135,24 @@
 
                         {{-- Admin Menu --}}
                         @if ($currentGuard === 'admin')
-                            {{-- User Management --}}
                             <li class="nav-item">
-                                <a href="{{ route('admin.users.index') }}" class="nav-link">
+                                <a href="{{ route('admin.users.index') }}"
+                                    class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-users-cog"></i>
                                     <p>User Management</p>
                                 </a>
                             </li>
-
-                            {{-- Category Management --}}
                             <li class="nav-item">
-                                <a href="{{ route('admin.categories.index') }}" class="nav-link">
+                                <a href="{{ route('admin.categories.index') }}"
+                                    class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-tags"></i>
                                     <p>Category Management</p>
                                 </a>
                             </li>
-
-                            {{-- Content Moderation --}}
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link">
+                            <li
+                                class="nav-item has-treeview {{ request()->routeIs('admin.moderation.*') ? 'menu-open' : '' }}">
+                                <a href="#"
+                                    class="nav-link {{ request()->routeIs('admin.moderation.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-flag"></i>
                                     <p>
                                         Content Moderation
@@ -146,52 +161,27 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="{{ route('admin.moderation.reported-posts') }}" class="nav-link ps-5">
+                                        <a href="{{ route('admin.moderation.reported-posts') }}"
+                                            class="nav-link {{ request()->routeIs('admin.moderation.reported-posts') ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Reported Posts</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
                                         <a href="{{ route('admin.moderation.reported-comments') }}"
-                                            class="nav-link ps-5">
+                                            class="nav-link {{ request()->routeIs('admin.moderation.reported-comments') ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Reported Comments</p>
                                         </a>
                                     </li>
                                 </ul>
                             </li>
-
-                            {{-- Site Settings --}}
                             <li class="nav-item">
-                                <a href="" class="nav-link">
+                                <a href="{{ route('admin.settings.index') }}"
+                                    class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-cogs"></i>
                                     <p>Site Settings</p>
                                 </a>
-                            </li>
-
-                            {{-- Reports & Analytics --}}
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon fas fa-chart-pie"></i>
-                                    <p>
-                                        Reports & Analytics
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link ps-5">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Content Reports</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="" class="nav-link ps-5">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>User Activity</p>
-                                        </a>
-                                    </li>
-                                </ul>
                             </li>
 
                             {{-- Author Menu --}}

@@ -10,6 +10,7 @@ use App\Http\Controllers\ReaderController;
 use App\Http\Controllers\UserManagemantController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ModerationController;
+use App\Http\Controllers\SiteSettingsController;
 
 
 
@@ -86,44 +87,49 @@ Route::middleware('auth.guard:admin')
          Route::delete('categories/{category}',   [CategoryController::class, 'destroy'])->name('categories.destroy');
 
 
-         Route::get   ('moderation/reported-posts',           [ModerationController::class, 'reportedPosts'])
-                                                                      ->name('moderation.reported-posts');
-         Route::post  ('moderation/reported-posts/{post}/unflag', [ModerationController::class, 'unflagPost'])
-                                                                      ->name('moderation.reported-posts.unflag');
-         Route::delete('moderation/reported-posts/{post}',      [ModerationController::class, 'deletePost'])
-                                                                      ->name('moderation.reported-posts.delete');
+            Route::get   ('moderation/reported-posts',           [ModerationController::class, 'reportedPosts'])
+                                                                        ->name('moderation.reported-posts');
+            Route::post  ('moderation/reported-posts/{post}/unflag', [ModerationController::class, 'unflagPost'])
+                                                                        ->name('moderation.reported-posts.unflag');
+            Route::delete('moderation/reported-posts/{post}',      [ModerationController::class, 'deletePost'])
+                                                                        ->name('moderation.reported-posts.delete');
 
-         Route::get   ('moderation/reported-comments',        [ModerationController::class, 'reportedComments'])
-                                                                      ->name('moderation.reported-comments');
-         Route::post  ('moderation/reported-comments/{comment}/unflag', [ModerationController::class, 'unflagComment'])
-                                                                      ->name('moderation.reported-comments.unflag');
-         Route::delete('moderation/reported-comments/{comment}',      [ModerationController::class, 'deleteComment'])
-                                                                      ->name('moderation.reported-comments.delete');
-     });
+            Route::get   ('moderation/reported-comments',        [ModerationController::class, 'reportedComments'])
+                                                                        ->name('moderation.reported-comments');
+            Route::post  ('moderation/reported-comments/{comment}/unflag', [ModerationController::class, 'unflagComment'])
+                                                                    ->name('moderation.reported-comments.unflag');
+            Route::delete('moderation/reported-comments/{comment}',      [ModerationController::class, 'deleteComment'])
+                                                                        ->name('moderation.reported-comments.delete');
+                                                                        Route::get('settings', [SiteSettingsController::class, 'index'])
+                ->name('settings.index');
+
+        Route::post('settings', [SiteSettingsController::class, 'update'])
+                ->name('settings.update');
+        });
 
 
 
 Route::middleware('auth.guard:author')
-     ->prefix('author')
-     ->as('author.')
-     ->group(function () {
+        ->prefix('author')
+        ->as('author.')
+        ->group(function () {
          // Dashboard
-         Route::get('dashboard', [AuthorController::class, 'index'])
-              ->name('dashboard');
+            Route::get('dashboard', [AuthorController::class, 'index'])
+                ->name('dashboard');
 
          // Can only create, update own posts
-         Route::resource('posts', PostController::class)
-              ->only(['create', 'store', 'edit', 'update'])
-              ->names('posts');
-     });
+            Route::resource('posts', PostController::class)
+                ->only(['create', 'store', 'edit', 'update'])
+                ->names('posts');
+        });
 
 
 
 Route::middleware('auth.guard:reader')
-     ->prefix('reader')
-     ->as('reader.')
-     ->group(function () {
+        ->prefix('reader')
+        ->as('reader.')
+        ->group(function () {
          // Dashboard
-         Route::get('dashboard', [ReaderController::class, 'index'])
-              ->name('dashboard');
-     });
+            Route::get('dashboard', [ReaderController::class, 'index'])
+                ->name('dashboard');
+        });
