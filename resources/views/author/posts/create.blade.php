@@ -18,7 +18,7 @@
                         <h1>Create Post</h1>
                     </div>
                     <div class="col-sm-6 text-right">
-                        <a href="{{ route('admin.posts.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('author.posts.index') }}" class="btn btn-secondary">
                             <i class="fas fa-arrow-left"></i> Back
                         </a>
                     </div>
@@ -31,7 +31,7 @@
 
                 @include('partials.alerts')
 
-                <form method="POST" action="{{ route('admin.posts.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('author.posts.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     {{-- Title --}}
@@ -91,7 +91,8 @@
                             <label>Status</label>
                             <select name="status" class="form-control">
                                 <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="published"{{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
+                                <option value="published"{{ old('status') == 'published' ? 'selected' : '' }}>Published
+                                </option>
                             </select>
                         </div>
                         <div class="form-group col-md-6">

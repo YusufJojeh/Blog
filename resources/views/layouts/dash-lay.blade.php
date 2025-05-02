@@ -5,9 +5,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {{-- Page Title + Site Name --}}
-    <title>@yield('title', 'Dashboard') – {{ $site_name }}</title>
+    <title>@yield('title', 'Dashboard') – {{ $site_name ?? config('app.name') }}</title>
 
-    {{-- Dynamic Favicon --}}
+    {{-- Favicon --}}
     @if ($favicon)
         <link rel="shortcut icon" href="{{ asset('storage/' . $favicon) }}" type="image/png">
     @endif
@@ -26,44 +26,19 @@
     <!-- AdminLTE -->
     <link rel="stylesheet" href="{{ asset('dist/css/adminlte.min.css') }}" />
 
-    {{-- Custom CSS from settings --}}
+    {{-- Custom CSS --}}
     @if ($custom_css)
         <style>
             {!! $custom_css !!}
         </style>
     @endif
-
-    <!-- Project Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}" />
-
     @stack('styles')
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+<body class="hold-transition sidebar-collapse layout-top-nav">
     <div class="wrapper">
-
-        {{-- Navbar --}}
-        <nav class="main-header navbar navbar-expand navbar-dark">
-            <a class="nav-link" data-widget="pushmenu" href="#" role="button">
-                <i class="fas fa-bars"></i>
-            </a>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="fullscreen" href="#" role="button">
-                        <i class="fas fa-expand-arrows-alt"></i>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-                        <i class="fas fa-th-large"></i>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <!-- /.navbar -->
-
         @php
-            // Determine current guard & user
             $currentGuard = null;
             $currentUser = null;
             foreach (['admin', 'author', 'reader'] as $g) {
@@ -75,56 +50,82 @@
             }
         @endphp
 
-        {{-- Main Sidebar --}}
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            {{-- Brand Logo --}}
-            <a href="{{ $currentGuard ? route($currentGuard . '.dashboard') : url('/') }}" class="brand-link">
-                @if ($logo)
-                    <img src="{{ asset('storage/' . $logo) }}" class="brand-image img-circle elevation-3"
-                        style="opacity: .8" alt="Site Logo">
-                @else
-                    <img src="{{ asset('images/logo.png') }}" class="brand-image img-circle elevation-3"
-                        style="opacity: .8" alt="Default Logo">
-                @endif
-                <span class="brand-text font-weight-light">{{ $site_name }}</span>
-            </a>
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
+            <div class="container">
+                <a href="{{ $currentGuard ? route($currentGuard . '.dashboard') : url('/') }}" class="navbar-brand">
+                    @if ($logo)
+                        <img src="{{ asset('storage/' . $logo) }}" alt="Logo"
+                            class="brand-image img-circle elevation-3" style="opacity:.8">
+                    @else
+                        <img src="{{ asset('images/logo.png') }}" alt="Logo"
+                            class="brand-image img-circle elevation-3" style="opacity:.8">
+                    @endif
+                    <span class="brand-text font-weight-light">{{ $site_name }}</span>
+                </a>
 
+                <button class="navbar-toggler order-1" type="button" data-toggle="collapse"
+                    data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url('/') }}" class="nav-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">Contact</a>
+                        </li>
+                    </ul>
+                    <form class="form-inline ml-3">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control form-control-navbar" type="search" placeholder="Search"
+                                aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-navbar" type="submit"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" data-widget="fullscreen" href="#"><i
+                                class="fas fa-expand-arrows-alt"></i></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-toggle="dropdown">
+                            <img src="{{ $currentUser && $currentUser->profile_image ? asset('storage/' . $currentUser->profile_image) : asset('images/default.png') }}"
+                                class="img-circle elevation-2" style="width:30px;height:30px;object-fit:cover;"
+                                alt="User"> {{ $currentUser->name ?? 'Guest' }}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                            <a class="dropdown-item" href="{{ route($currentGuard . '.profile.show') }}"><i
+                                    class="far fa-user mr-2"></i>Profile</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#"
+                                onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
+                                    class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!-- /.navbar -->
+
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <div class="sidebar">
                 <nav class="mt-2">
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" data-accordion="false">
-                        {{-- User Panel --}}
-                        <li class="nav-item has-treeview">
-                            <a href="#" class="nav-link">
-                                <img src="{{ asset('images/' . ($currentUser->profile_image ?? 'default.png')) }}"
-                                    class="img-circle elevation-2"
-                                    style="width:36px;height:36px;object-fit:cover;border:2px solid #fff;"
-                                    alt="Avatar">
-                                <p class="ps-3 mb-0 d-inline-block">
-                                    {{ $currentUser->name ?? 'Guest' }}
-                                    <i class="fas fa-angle-down float-right"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link ps-5">
-                                        <i class="far fa-user nav-icon"></i>
-                                        <p>Profile</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#" class="nav-link ps-5"
-                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        <i class="fas fa-sign-out-alt nav-icon"></i>
-                                        <p>Logout</p>
-                                    </a>
-                                </li>
-                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                    @csrf
-                                </form>
-                            </ul>
-                        </li>
-
-                        {{-- Dashboard Link --}}
                         <li class="nav-item">
                             <a href="{{ $currentGuard ? route($currentGuard . '.dashboard') : url('/') }}"
                                 class="nav-link {{ request()->routeIs($currentGuard . '.dashboard') ? 'active' : '' }}">
@@ -132,8 +133,6 @@
                                 <p>Dashboard</p>
                             </a>
                         </li>
-
-                        {{-- Admin Menu --}}
                         @if ($currentGuard === 'admin')
                             <li class="nav-item">
                                 <a href="{{ route('admin.users.index') }}"
@@ -154,26 +153,19 @@
                                 <a href="#"
                                     class="nav-link {{ request()->routeIs('admin.moderation.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-flag"></i>
-                                    <p>
-                                        Content Moderation
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
+                                    <p>Content Moderation<i class="right fas fa-angle-left"></i></p>
                                 </a>
                                 <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.moderation.reported-posts') }}"
-                                            class="nav-link {{ request()->routeIs('admin.moderation.reported-posts') ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
+                                    <li class="nav-item"><a href="{{ route('admin.moderation.reported-posts') }}"
+                                            class="nav-link {{ request()->routeIs('admin.moderation.reported-posts') ? 'active' : '' }}"><i
+                                                class="far fa-circle nav-icon"></i>
                                             <p>Reported Posts</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{ route('admin.moderation.reported-comments') }}"
-                                            class="nav-link {{ request()->routeIs('admin.moderation.reported-comments') ? 'active' : '' }}">
-                                            <i class="far fa-circle nav-icon"></i>
+                                        </a></li>
+                                    <li class="nav-item"><a href="{{ route('admin.moderation.reported-comments') }}"
+                                            class="nav-link {{ request()->routeIs('admin.moderation.reported-comments') ? 'active' : '' }}"><i
+                                                class="far fa-circle nav-icon"></i>
                                             <p>Reported Comments</p>
-                                        </a>
-                                    </li>
+                                        </a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
@@ -183,11 +175,11 @@
                                     <p>Site Settings</p>
                                 </a>
                             </li>
-
-                            {{-- Author Menu --}}
                         @elseif($currentGuard === 'author')
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link">
+                            <li
+                                class="nav-item has-treeview {{ request()->routeIs('author.posts.*') ? 'menu-open' : '' }}">
+                                <a href="#"
+                                    class="nav-link {{ request()->routeIs('author.posts.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-edit"></i>
                                     <p>
                                         My Articles
@@ -196,49 +188,47 @@
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="#" class="nav-link ps-5">
+                                        <a href="{{ route('author.posts.index') }}"
+                                            class="nav-link ps-5 {{ request()->routeIs('author.posts.index') ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>All Articles</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="#" class="nav-link ps-5">
+                                        <a href="{{ route('author.posts.create') }}"
+                                            class="nav-link ps-5 {{ request()->routeIs('author.posts.create') ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Create Article</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="#" class="nav-link ps-5">
+                                        <a href="{{ route('author.posts.drafts') }}"
+                                            class="nav-link ps-5 {{ request()->routeIs('author.posts.drafts') ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Drafts</p>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link ps-5">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Scheduled</p>
-                                        </a>
-                                    </li>
+
                                 </ul>
                             </li>
-
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link">
+                            <li
+                                class="nav-item has-treeview {{ request()->routeIs('author.comments.*') ? 'menu-open' : '' }}">
+                                <a href="#"
+                                    class="nav-link {{ request()->routeIs('author.comments.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-comments"></i>
-                                    <p>
-                                        Comments
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
+                                    <p>Comments<i class="right fas fa-angle-left"></i></p>
                                 </a>
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item">
-                                        <a href="#" class="nav-link ps-5">
+                                        <a href="{{ route('author.comments.index') }}"
+                                            class="nav-link ps-5 {{ request()->routeIs('author.comments.index') ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Comments on My Posts</p>
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a href="#" class="nav-link ps-5">
+                                        <a href="{{ route('author.comments.spam') }}"
+                                            class="nav-link ps-5 {{ request()->routeIs('author.comments.spam') ? 'active' : '' }}">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Spam Reports</p>
                                         </a>
@@ -246,71 +236,27 @@
                                 </ul>
                             </li>
 
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon fas fa-chart-line"></i>
-                                    <p>
-                                        Analytics
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link ps-5">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Post Stats</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link ps-5">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Engagement Trends</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
 
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon fas fa-user"></i>
-                                    <p>My Profile</p>
-                                </a>
-                            </li>
-
-                            {{-- Reader Menu --}}
-                        @elseif($currentGuard === 'reader')
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon fas fa-rss"></i>
-                                    <p>My Feed</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon fas fa-bookmark"></i>
-                                    <p>Bookmarks</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon fas fa-comments"></i>
-                                    <p>My Comments</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon fas fa-search"></i>
-                                    <p>Search Articles</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="nav-icon fas fa-sliders-h"></i>
-                                    <p>Preferences</p>
-                                </a>
-                            </li>
-                        @endif
-
+                    </ul>
+                    </li>
+                @elseif($currentGuard === 'reader')
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon fas fa-rss"></i>
+                            <p>My Feed</p>
+                        </a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon fas fa-bookmark"></i>
+                            <p>Bookmarks</p>
+                        </a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon fas fa-comments"></i>
+                            <p>My Comments</p>
+                        </a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon fas fa-search"></i>
+                            <p>Search Articles</p>
+                        </a></li>
+                    <li class="nav-item"><a href="#" class="nav-link"><i
+                                class="nav-icon fas fa-sliders-h"></i>
+                            <p>Preferences</p>
+                        </a></li>
+                    @endif
                     </ul>
                 </nav>
             </div>
@@ -323,13 +269,13 @@
             </section>
         </div>
 
-        <!-- Main Footer -->
-        <footer class="main-footer text-center">
-            <strong>&copy; {{ date('Y') }} My Dashboard</strong>
-        </footer>
+        <!-- Footer -->
+        <footer class="main-footer text-center"><strong>&copy; {{ date('Y') }}
+                {{ $site_name ?? config('app.name') }}</strong></footer>
+
     </div>
 
-    <!-- REQUIRED SCRIPTS -->
+    <!-- Scripts -->
     <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
@@ -337,8 +283,7 @@
     <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
     <script>
         $(function() {
-            $('[data-widget="treeview"]').Treeview('init');
-            $('[data-toggle="dropdown"]').dropdown();
+            $('[data-widget="pushmenu"]').PushMenu();
         });
     </script>
     @stack('scripts')
