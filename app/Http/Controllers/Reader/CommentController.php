@@ -15,8 +15,10 @@ class CommentController extends Controller {
     }
 
     public function index() {
-        $reader = Auth::guard( 'reader' )->user();
-        $comments = $reader->comments()->latest()->paginate( 10 );
+        $readerId = Auth::guard( 'reader' )->id();
+        $comments = Comment::where( 'user_id', $readerId )
+        ->latest()
+        ->paginate( 10 );
         return view( 'reader.comments', compact( 'comments' ) );
     }
 

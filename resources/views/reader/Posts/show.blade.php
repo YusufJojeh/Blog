@@ -42,7 +42,7 @@
 
                     {{-- Body --}}
                     <div class="card-text mb-4">
-                        {!! nl2br(e($post->description)) !!}
+                        {!! nl2br(e($post->content)) !!}
                     </div>
 
                     {{-- Back button --}}

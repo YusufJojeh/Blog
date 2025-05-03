@@ -106,15 +106,13 @@
                                         <td>{{ $post->title }}</td>
                                         <td>{{ $post->author->name }}</td>
                                         <td>{{ ucfirst($post->status) }}</td>
-                                        <td>{{ $post->published_at->format('Y-m-d') }}</td>
+                                        <td>{{ $post->published_at ? $post->published_at->format('Y-m-d') : 'Not Found Creator' }}
+                                        </td>
                                         <td>
-                                            <a href="{{ route('admin.posts.edit', $post) }}"
-                                                class="btn btn-sm btn-primary">Edit</a>
-                                            <form action="{{ route('admin.posts.destroy', $post) }}" method="POST"
-                                                class="d-inline">
-                                                @csrf @method('DELETE')
-                                                <button onclick="return confirm('Are you sure?')"
-                                                    class="btn btn-sm btn-danger">Delete</button>
+
+                                            @csrf @method('DELETE')
+                                            <button onclick="return confirm('Are you sure?')"
+                                                class="btn btn-sm btn-danger">Delete</button>
                                             </form>
                                         </td>
                                     </tr>

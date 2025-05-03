@@ -6,11 +6,16 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder {
     public function run(): void {
-        // شغِّل seeders الفرعيّة
         $this->call( [
             AdminSeeder::class,
             AuthorSeeder::class,
             ReaderSeeder::class,
+            CategorySeeder::class,
+            PostSeeder::class,
+            CommentSeeder::class,
+            SettingSeeder::class,
+            BookmarkSeeder::class,
+            PreferenceSeeder::class,
         ] );
     }
 }

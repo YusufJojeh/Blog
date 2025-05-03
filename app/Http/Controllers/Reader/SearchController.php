@@ -8,11 +8,14 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 
 class SearchController extends Controller {
-    public function articles( Request $request ) {
+    public function index( Request $request ) {
         $q = $request->input( 'q' );
+
         $articles = Post::where( 'title', 'like', "%{$q}%" )
-        ->orWhere( 'body', 'like', "%{$q}%" )
+        ->orWhere( 'content', 'like', "%{$q}%" )
         ->paginate( 10 );
+
         return view( 'reader.search', compact( 'articles', 'q' ) );
     }
+
 }

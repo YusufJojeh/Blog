@@ -4,7 +4,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Setting;
-
+use Illuminate\Pagination\Paginator;
 class AppServiceProvider extends ServiceProvider {
     /**
     * Register any application services.
@@ -25,5 +25,6 @@ class AppServiceProvider extends ServiceProvider {
             $view->with('favicon',    Setting::get('favicon'));
             $view->with('custom_css', Setting::get('custom_css'));
         });
+        Paginator::useBootstrapFive();
     }
 }

@@ -13,14 +13,16 @@ class Post extends Model {
         'status', 'published_at',
         'flagged',
     ];
-    protected $dates = [ 'published_at' ];
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
 
     public function category(): BelongsTo {
         return $this->belongsTo( Category::class );
     }
 
     public function author(): BelongsTo {
-        return $this->belongsTo( User::class, 'author_id' );
+        return $this->belongsTo( Author::class, 'author_id' );
     }
 
     public function comments(): HasMany {

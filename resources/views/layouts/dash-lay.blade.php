@@ -240,19 +240,23 @@
                     </ul>
                     </li>
                 @elseif($currentGuard === 'reader')
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon fas fa-rss"></i>
+                    <li class="nav-item"><a href="{{ route('reader.feed') }}" class="nav-link"><i
+                                class="nav-icon fas fa-rss"></i>
                             <p>My Feed</p>
                         </a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon fas fa-bookmark"></i>
+                    <li class="nav-item"><a href="{{ route('reader.bookmarks.index') }}" class="nav-link"><i
+                                class="nav-icon fas fa-bookmark"></i>
                             <p>Bookmarks</p>
                         </a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon fas fa-comments"></i>
+                    <li class="nav-item"><a href="{{ route('reader.comments.index') }}" class="nav-link"><i
+                                class="nav-icon fas fa-comments"></i>
                             <p>My Comments</p>
                         </a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon fas fa-search"></i>
+                    <li class="nav-item"><a href="{{ route('reader.search') }}" class="nav-link"><i
+                                class="nav-icon fas fa-search"></i>
                             <p>Search Articles</p>
                         </a></li>
-                    <li class="nav-item"><a href="#" class="nav-link"><i
+                    <li class="nav-item"><a href="{{ route('reader.preferences.edit') }}" class="nav-link"><i
                                 class="nav-icon fas fa-sliders-h"></i>
                             <p>Preferences</p>
                         </a></li>

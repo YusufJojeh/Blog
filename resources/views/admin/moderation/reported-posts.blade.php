@@ -23,7 +23,7 @@
                         <tr>
                             <td>{{ $post->id }}</td>
                             <td>{{ Str::limit($post->title, 40) }}</td>
-                            <td>{{ $post->author->name }}</td>
+                            <td>By {{ optional($post->author)->name ?? '—' }}</td>
                             <td>{{ $post->updated_at->format('Y-m-d') }}</td>
                             <td class="d-flex">
                                 <form action="{{ route('admin.moderation.reported-posts.unflag', $post) }}" method="POST"
