@@ -25,7 +25,7 @@ class CommentSeeder extends Seeder {
             for ( $i = 0; $i < $count; $i++ ) {
                 Comment::create( [
                     'post_id' => $postId,
-                    'user_id' => $faker->randomElement( $readerIds ),
+                    'reader_id' => $faker->randomElement( $readerIds ),
                     'content' => $faker->sentence,
                     'approved' => $faker->boolean( 70 ),
                     'flagged' => $faker->boolean( 5 ),

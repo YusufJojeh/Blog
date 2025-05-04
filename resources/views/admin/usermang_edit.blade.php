@@ -22,14 +22,7 @@
                     <input type="email" name="email" id="email" class="form-control"
                         value="{{ old('email', $user->email) }}" required>
                 </div>
-                <div class="mb-3">
-                    <label for="role" class="form-label">Role</label>
-                    <select name="role" id="role" class="form-select" required>
-                        <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="author" {{ $user->role === 'author' ? 'selected' : '' }}>Author</option>
-                        <option value="reader" {{ $user->role === 'reader' ? 'selected' : '' }}>Reader</option>
-                    </select>
-                </div>
+
                 <div class="mb-3">
                     <label for="password" class="form-label">Password <small>(leave blank to keep)</small></label>
                     <input type="password" name="password" id="password" class="form-control" placeholder="New password">

@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 
 class CommentController extends Controller {
     public function __construct() {
-        // Apply auth middleware for the 'reader' guard
+
         $this->middleware( 'auth:reader' );
     }
 
@@ -23,23 +23,21 @@ class CommentController extends Controller {
     }
 
     public function store( Request $request, Post $post ) {
-        // Validate input
         $request->validate( [
-            'content' => 'required|string'
+            'content' => 'required|string',
         ] );
 
-        // Create comment as the authenticated reader
         $post->comments()->create( [
-            'content' => $request->content,
-            'user_id' => Auth::guard( 'reader' )->id(),
-            'approved' => false,
+            'content'  => $request->content,
+            'reader_id'  => Auth::guard( 'reader' )->id(),
+            'approved' => true,
+            'flagged'  => false,
         ] );
 
-        return back()->with( 'success', 'Comment submitted for approval.' );
+        return back()->with( 'success', 'Your comment has been posted!' );
     }
 
     public function report( Comment $comment ) {
-        // Flag comment as spam
         $comment->update( [
             'flagged' => true,
         ] );

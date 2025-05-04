@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('comments', function (Blueprint $table) {
         $table->id();
         $table->foreignId('post_id')->constrained()->cascadeOnDelete();
-        $table->foreignId('user_id')->constrained('readers')->cascadeOnDelete();
+        $table->foreignId('reader_id')->constrained('readers')->cascadeOnDelete();
         $table->text('content');
         $table->boolean('approved')->default(false);
         $table->boolean('flagged')->default(false);

@@ -53,9 +53,13 @@ Route::middleware('auth.guard:admin')
 
          // User management
          Route::resource('users', UserManagemantController::class)
-              ->except(['show'])
+              ->except(['show','edit','update','destroy'])
               ->names('users');
 
+        Route::get   ('users/{role}/{id}',             [UserManagemantController::class, 'show'])   ->name('users.show');
+Route::get   ('users/{role}/{id}/edit',        [UserManagemantController::class, 'edit'])   ->name('users.edit');
+Route::put   ('users/{role}/{id}',             [UserManagemantController::class, 'update']) ->name('users.update');
+Route::delete('users/{role}/{id}',             [UserManagemantController::class, 'destroy'])->name('users.destroy');
          // Category management
          Route::resource('categories', CategoryController::class)
               ->except(['show'])
@@ -129,7 +133,7 @@ Route::middleware('auth.guard:reader')
          Route::post('comments/{comment}/report',[ReaderCommentController::class,'report'])->name('comments.report');
 
          // Search articles
-         Route::get('search', [SearchController::class,'index'])->name('search');
+         Route::get('search', [SearchController::class,'search'])->name('search');
 
          // Preferences
          Route::get('preferences', [PreferenceController::class,'edit'])->name('preferences.edit');

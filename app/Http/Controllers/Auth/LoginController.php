@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
 use App\Models\Admin;
 use App\Models\Author;
@@ -48,15 +49,27 @@ class LoginController extends Controller {
     }
 
     public function logout( Request $request ) {
+        // 1 ) Get and log out the user from the correct guard
         $guard = session( 'guard', 'reader' );
         Auth::guard( $guard )->logout();
 
+        // 2 ) Invalidate session and regenerate CSRF token
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        // 3 ) Queue forget for every cookie sent in the request
+        //    ( this will set a past-expiry header for each one )
+        $cookieNames = array_keys( $request->cookies->all() );
+        foreach ( $cookieNames as $name ) {
+            Cookie::queue( Cookie::forget( $name ) );
+        }
+
+        // 4 ) Redirect back to the appropriate login page
         $loginPath = in_array( $guard, [ 'admin', 'author', 'reader' ] )
         ? "/{$guard}/login"
         : '/login';
+
+        Log::debug( 'Logged out and cleared cookies', [ 'guard' => $guard, 'cleared' => $cookieNames ] );
 
         return redirect( $loginPath );
     }

@@ -15,10 +15,6 @@ class UserManagemantController extends Controller {
         $this->userService = $userService;
     }
 
-    /**
-    * Display a listing of users.
-    */
-
     public function index() {
         $users = $this->userService->getAllUsers();
 
@@ -28,8 +24,6 @@ class UserManagemantController extends Controller {
     public function create() {
         return view( 'admin.usermang_create' );
     }
-
-    /** POST /admin/users */
 
     public function store( Request $request ) {
         $data = $request->validate( [
@@ -50,39 +44,20 @@ class UserManagemantController extends Controller {
         ->with( 'message', 'User created successfully.' );
     }
 
-    /** GET  /admin/users/ {
-    role}
-    / {
-    id}
-    */
-
     public function show( $role, $id ) {
         $model = $this->getModel( $role );
-        // Get model based on role
+
         $user = $model::findOrFail( $id );
-        // Fetch the user by id
 
         return view( 'admin.usermang_show', compact( 'user', 'role' ) );
-        // Pass both user and role
-    }
 
-    /** GET  /admin/users/ {
-    role}
-    / {
-    id}
-    /edit */
+    }
 
     public function edit( $role, $id ) {
         $model = $this->getModel( $role );
         $user  = $model::findOrFail( $id );
         return view( 'admin.usermang_edit', compact( 'user', 'role' ) );
     }
-
-    /** PUT  /admin/users/ {
-    role}
-    / {
-    id}
-    */
 
     public function update( Request $request, $role, $id ) {
         $model = $this->getModel( $role );
@@ -105,12 +80,6 @@ class UserManagemantController extends Controller {
         ->with( 'message', 'User updated successfully.' );
     }
 
-    /** DELETE /admin/users/ {
-    role}
-    / {
-    id}
-    */
-
     public function destroy( $role, $id ) {
         $model = $this->getModel( $role );
         $model::destroy( $id );
@@ -119,7 +88,6 @@ class UserManagemantController extends Controller {
         ->with( 'message', ucfirst( $role ).' deleted.' );
     }
 
-    /** helper to map role → model */
     protected function getModel( string $role ): string {
         return match( $role ) {
             'admin'  => Admin::class,

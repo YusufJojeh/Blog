@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 
 class SearchController extends Controller {
-    public function index( Request $request ) {
+    public function search( Request $request ) {
         $q = $request->input( 'q' );
 
         $articles = Post::where( 'title', 'like', "%{$q}%" )

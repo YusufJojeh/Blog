@@ -17,10 +17,10 @@ class CommentController extends Controller
 
     public function index()
     {
-        // Get authenticated author ID from the author guard
+        
         $authorId = Auth::guard('author')->id();
 
-        // Fetch comments for posts owned by this author
+        
         $comments = Comment::whereHas('post', function ($q) use ($authorId) {
             $q->where('author_id', $authorId);
         })->with(['post', 'user'])->paginate(10);
@@ -31,7 +31,7 @@ class CommentController extends Controller
     public function approve(Comment $comment)
     {
         $authorId = Auth::guard('author')->id();
-        // Ensure the comment belongs to a post owned by this author
+        
         abort_unless($comment->post->author_id === $authorId, 403);
 
         $comment->update(['approved' => true]);
@@ -43,7 +43,7 @@ class CommentController extends Controller
     {
         $authorId = Auth::guard('author')->id();
 
-        // Fetch flagged comments for this author's posts
+        
         $comments = Comment::whereHas('post', function ($q) use ($authorId) {
             $q->where('author_id', $authorId);
         })->where('flagged', true)

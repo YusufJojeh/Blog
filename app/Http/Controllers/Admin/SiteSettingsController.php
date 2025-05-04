@@ -36,13 +36,11 @@ class SiteSettingsController extends Controller {
             Setting::set( 'logo', $path );
         }
 
-        // favicon
         if ( $request->hasFile( 'favicon' ) ) {
             $path = $request->file( 'favicon' )->store( 'settings', 'public' );
             Setting::set( 'favicon', $path );
         }
 
-        // custom_css
         Setting::set( 'custom_css', $request->custom_css );
 
         return redirect()

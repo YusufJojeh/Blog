@@ -16,12 +16,12 @@ class AuthorController extends Controller {
     {
         $authorId = Auth::guard('author')->id();
 
-        // Post statistics
+        
         $totalPosts = Post::where('author_id', $authorId)->count();
         $published = Post::where('author_id', $authorId)->where('status', 'published')->count();
         $drafts = Post::where('author_id', $authorId)->where('status', 'draft')->count();
 
-        // Engagement trends (last 7 days comments)
+        
         $engagement = Comment::whereHas('post', function ($q) use ($authorId) {
             $q->where('author_id', $authorId);
         })

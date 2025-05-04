@@ -25,23 +25,21 @@ class BookmarkController extends Controller {
     public function store( Post $post ) {
         $readerId = Auth::guard( 'reader' )->id();
 
-        // Create the bookmark if it doesn't already exist
         Bookmark::firstOrCreate(
-            ['reader_id' => $readerId, 'post_id' => $post->id],
-            []  // no additional attributes
-        );  // :contentReference[oaicite:0]{index=0}
+            [ 'reader_id' => $readerId, 'post_id' => $post->id ],
+            []
+        );
 
-        return back()->with('success', 'Post bookmarked.');
+        return back()->with( 'success', 'Post bookmarked.' );
     }
 
-    public function destroy(Post $post) {
-        $readerId = Auth::guard('reader')->id();
+    public function destroy( Post $post ) {
+        $readerId = Auth::guard( 'reader' )->id();
 
-        // Delete the bookmark record matching both reader and post
-        Bookmark::where('reader_id', $readerId)
-                ->where('post_id', $post->id)
-                ->delete();  // :contentReference[oaicite:1]{index=1}
+        Bookmark::where( 'reader_id', $readerId )
+        ->where( 'post_id', $post->id )
+        ->delete();
 
-        return back()->with('success', 'Bookmark removed.' );
+        return back()->with( 'success', 'Bookmark removed.' );
     }
 }
